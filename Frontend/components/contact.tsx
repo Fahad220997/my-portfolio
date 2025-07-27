@@ -17,6 +17,8 @@ export default function Contact() {
     email: "",
     message: "",
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState("")
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -26,12 +28,31 @@ export default function Contact() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log("Form submitted:", formData)
-    // Reset form
-    setFormData({ name: "", email: "", message: "" })
+    setIsSubmitting(true)
+    setSubmitMessage("")
+
+    try {
+      const response = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        setSubmitMessage("Message sent successfully! I'll get back to you soon.")
+        setFormData({ name: "", email: "", message: "" })
+      } else {
+        setSubmitMessage("Failed to send message. Please try again.")
+      }
+    } catch (error) {
+      setSubmitMessage("Failed to send message. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const contactInfo = [
@@ -173,9 +194,21 @@ export default function Contact() {
               </form>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleSubmit}>
-                Send Message
-              </Button>
+              <div className="w-full">
+                <Button 
+                  type="submit" 
+                  className="w-full bg-blue-600 hover:bg-blue-700" 
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </Button>
+                {submitMessage && (
+                  <p className={`mt-2 text-sm ${submitMessage.includes("successfully") ? "text-green-600" : "text-red-600"}`}>
+                    {submitMessage}
+                  </p>
+                )}
+              </div>
             </CardFooter>
           </Card>
         </div>

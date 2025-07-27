@@ -103,7 +103,14 @@ export default function Projects() {
               </CardContent>
 
               <CardFooter>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">View Project</Button>
+                <a
+                  href={project.link && project.link !== "#" ? project.link : `https://github.com/Fahad220997`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700">View Project</Button>
+                </a>
               </CardFooter>
             </Card>
           ))}
