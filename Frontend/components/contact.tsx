@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Github, Linkedin, Mail, MapPin, Phone } from "lucide-react"
+import { Github, Linkedin, Mail, MapPin, Phone, Send, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 
@@ -34,7 +34,8 @@ export default function Contact() {
     setSubmitMessage("")
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const response = await fetch(`${apiUrl}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,11 +93,13 @@ export default function Contact() {
   ]
 
   return (
-    <section id="contact" className="py-20 bg-gray-50 px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="py-20 bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Get In Touch</h2>
+        <div className="text-center mb-16 animate-fade-in">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 gradient-text">
+            Get In Touch
+          </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             I'm always interested in new opportunities and collaborations. Let's discuss how we can work together!
           </p>
@@ -105,22 +108,24 @@ export default function Contact() {
         {/* Contact Content */}
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Information */}
-          <div>
+          <div className="animate-slide-in-left">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
 
             {/* Contact Details */}
-            <div className="space-y-4 mb-8">
-              {contactInfo.map((info) => (
-                <div key={info.label} className="flex items-center">
-                  <info.icon className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0" />
+            <div className="space-y-6 mb-8">
+              {contactInfo.map((info, index) => (
+                <div key={info.label} className="flex items-center p-4 rounded-lg hover-lift glass transition-all duration-300" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white mr-4">
+                    <info.icon className="h-5 w-5" />
+                  </div>
                   <div>
-                    <p className="text-sm text-gray-500">{info.label}</p>
+                    <p className="text-sm text-gray-500 font-medium">{info.label}</p>
                     {info.href.startsWith("http") || info.href.startsWith("mailto") || info.href.startsWith("tel") ? (
-                      <Link href={info.href} className="text-gray-700 hover:text-blue-600 transition-colors">
+                      <Link href={info.href} className="text-gray-700 hover:text-blue-600 transition-colors font-semibold">
                         {info.value}
                       </Link>
                     ) : (
-                      <span className="text-gray-700">{info.value}</span>
+                      <span className="text-gray-700 font-semibold">{info.value}</span>
                     )}
                   </div>
                 </div>
@@ -131,12 +136,14 @@ export default function Contact() {
             <div>
               <h4 className="text-lg font-semibold text-gray-900 mb-4">Follow Me</h4>
               <div className="space-y-3">
-                {socialLinks.map((social) => (
-                  <div key={social.label} className="flex items-center">
-                    <social.icon className="h-5 w-5 text-blue-600 mr-3" />
+                {socialLinks.map((social, index) => (
+                  <div key={social.label} className="flex items-center p-3 rounded-lg hover-lift glass transition-all duration-300" style={{ animationDelay: `${(index + 3) * 0.1}s` }}>
+                    <div className="p-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white mr-3">
+                      <social.icon className="h-4 w-4" />
+                    </div>
                     <Link
                       href={social.href}
-                      className="text-gray-700 hover:text-blue-600 transition-colors"
+                      className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -149,15 +156,17 @@ export default function Contact() {
           </div>
 
           {/* Contact Form */}
-          <Card>
+          <Card className="animate-slide-in-right glass border-0 shadow-xl">
             <CardHeader>
-              <CardTitle>Send me a message</CardTitle>
-              <CardDescription>Fill out the form below and I'll get back to you as soon as possible.</CardDescription>
+              <CardTitle className="text-2xl font-bold gradient-text">Send me a message</CardTitle>
+              <CardDescription className="text-gray-600">
+                Fill out the form below and I'll get back to you as soon as possible.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Name *</Label>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-gray-700 font-medium">Name *</Label>
                   <Input
                     id="name"
                     name="name"
@@ -165,10 +174,11 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
+                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors duration-300"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="email">Email *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-gray-700 font-medium">Email *</Label>
                   <Input
                     id="email"
                     name="email"
@@ -177,10 +187,11 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors duration-300"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="message">Message *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-gray-700 font-medium">Message *</Label>
                   <Textarea
                     id="message"
                     name="message"
@@ -189,6 +200,7 @@ export default function Contact() {
                     value={formData.message}
                     onChange={handleInputChange}
                     required
+                    className="border-2 border-gray-200 focus:border-blue-500 transition-colors duration-300 resize-none"
                   />
                 </div>
               </form>
@@ -197,16 +209,35 @@ export default function Contact() {
               <div className="w-full">
                 <Button 
                   type="submit" 
-                  className="w-full bg-blue-600 hover:bg-blue-700" 
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group" 
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Sending..." : "Send Message"}
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Sending...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Send className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
+                      Send Message
+                    </span>
+                  )}
                 </Button>
                 {submitMessage && (
-                  <p className={`mt-2 text-sm ${submitMessage.includes("successfully") ? "text-green-600" : "text-red-600"}`}>
-                    {submitMessage}
-                  </p>
+                  <div className={`mt-3 p-3 rounded-lg flex items-center gap-2 ${
+                    submitMessage.includes("successfully") 
+                      ? "bg-green-50 text-green-700 border border-green-200" 
+                      : "bg-red-50 text-red-700 border border-red-200"
+                  }`}>
+                    {submitMessage.includes("successfully") ? (
+                      <CheckCircle className="h-4 w-4" />
+                    ) : (
+                      <div className="h-4 w-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin"></div>
+                    )}
+                    <span className="text-sm font-medium">{submitMessage}</span>
+                  </div>
                 )}
               </div>
             </CardFooter>
